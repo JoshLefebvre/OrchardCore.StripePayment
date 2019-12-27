@@ -1,0 +1,25 @@
+@{
+    ViewData["Title"] = "Payment";
+}
+<div>
+    <button onclick="addSubscription()">Add New Subscription</button>
+</div>
+
+<script src="https://js.stripe.com/v3/"></script>
+<script type="text/javascript">
+
+    function addSubscription() {
+        var stripe = Stripe('pk_test_GPnhA22EXteVUt77tF1TrRxF');
+        stripe.redirectToCheckout({
+            // Make the id field from the Checkout Session creation API response
+            // available to this file, so you can provide it as parameter here
+            // instead of the {{CHECKOUT_SESSION_ID}} placeholder.
+            sessionId: '@ViewBag.SessionId'
+        }).then(function (result) {
+            console.log('Success Stripe')
+            // If `redirectToCheckout` fails due to a browser or network
+            // error, display the localized error message to your customer
+            // using `result.error.message`.
+        });
+    }
+</script>
