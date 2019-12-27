@@ -14,7 +14,6 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\..\LefeWareLearning.Core\LefeWareLearning.Core\LefeWareLearning.Core.csproj" />
     <ProjectReference Include="..\..\LefeWareLearning.Core\LefeWareLearning.TenantBilling\LefeWareLearning.TenantBilling.csproj" />
     <ProjectReference Include="..\..\OrchardCore\OrchardCore.Abstractions\OrchardCore.Abstractions.csproj" />
     <ProjectReference Include="..\..\OrchardCore\OrchardCore.Admin.Abstractions\OrchardCore.Admin.Abstractions.csproj" />
