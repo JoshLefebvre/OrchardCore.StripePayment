@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using OrchardCore.Modules;
 using Stripe;
 
@@ -20,11 +21,11 @@ namespace LefeWareLearning.StripePayment.Controllers
         private readonly ILogger<StripeWebHookController> _logger;
         private readonly IServiceProvider _serviceProvider;
         private readonly StripeConfigurationOptions _options;
-        public StripeWebHookController(IServiceProvider serviceProvider, ILogger<StripeWebHookController> logger, StripeConfigurationOptions options)
+        public StripeWebHookController(IServiceProvider serviceProvider, ILogger<StripeWebHookController> logger, IOptions<StripeConfigurationOptions> options)
         {
             _serviceProvider = serviceProvider;
             _logger = logger;
-            _options = options;
+            _options = options.Value;
         }
 
         [HttpPost]

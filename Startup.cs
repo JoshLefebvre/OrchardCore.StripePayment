@@ -4,8 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using LefeWareLearning.StripePayment;
+using LefeWareLearning.TenantBilling;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OrchardCore.DisplayManagement.Handlers;
 using OrchardCore.Environment.Shell.Configuration;
@@ -27,16 +29,16 @@ namespace LefeWareLearning.StripePayment
     [Feature(StripePaymentConstants.Features.StripePayment)]
     public class StripePaymentStartup : StartupBase
     {
-        private readonly IShellConfiguration _configuration;
+        private readonly IConfiguration _configuration;
 
-        public StripePaymentStartup(IShellConfiguration configuration)
+        public StripePaymentStartup(IConfiguration configuration)
         {
             _configuration = configuration;
         }
 
         public override void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<StripeConfigurationOptions>(_configuration.GetSection("OrchardCore.Media.Azure"));
+            services.Configure<StripeConfigurationOptions>(_configuration.GetSection("LefeWareLearning:Stripe"));
         }
 
         public override void Configure(IApplicationBuilder app, IEndpointRouteBuilder routes, IServiceProvider serviceProvider)

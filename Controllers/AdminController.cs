@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using LefeWareLearning.TenantBilling;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using OrchardCore.Environment.Shell;
 using OrchardCore.Modules;
 using Stripe;
 using Stripe.Checkout;
@@ -10,17 +12,19 @@ using Stripe.Checkout;
 namespace LefeWareLearning.StripePayment
 {
     [Feature(StripePaymentConstants.Features.StripePayment)]
-    public class PaymentController : Controller
+    public class AdminController : Controller
     {
         private const long AMOUNT = 4499;
 
         private readonly IAuthorizationService _authorizationService;
         private readonly StripeConfigurationOptions _options;
+        private readonly ShellSettings _shellSettings;
 
-        public PaymentController(IAuthorizationService authorizationService, StripeConfigurationOptions options)
+        public AdminController(IAuthorizationService authorizationService, IOptions<StripeConfigurationOptions> options, ShellSettings shellSettings)
         {
             _authorizationService = authorizationService;
-            _options = options;
+            _options = options.Value;
+            _shellSettings = shellSettings;
         }
 
         public async Task<IActionResult> Index()
@@ -44,10 +48,10 @@ namespace LefeWareLearning.StripePayment
                     },
                     Metadata = new Dictionary<string, string>()
                     {
-                        { "TenantId","" }
+                        { "TenantId", _shellSettings.Name }
                     }
                 },
-                SuccessUrl = $"https://{HttpContext.Request.Host.Value}/admin/success?session_id={{CHECKOUT_SESSION_ID}}",
+                SuccessUrl = $"https://{HttpContext.Request.Host.Value}/LefeWareLearning.StripePayment/admin/paymentsuccess?sessionid={{CHECKOUT_SESSION_ID}}",
                 CancelUrl = $"https://{HttpContext.Request.Host.Value}/admin",
             };
 
@@ -59,7 +63,7 @@ namespace LefeWareLearning.StripePayment
             return View();
         }
 
-        public async Task<IActionResult> AddPayment()
+        public async Task<IActionResult> PaymentSuccess(string sessionId)
         {
             return View();
         }
