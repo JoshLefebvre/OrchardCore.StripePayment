@@ -1,1 +1,1 @@
-./stripe.exe listen --forward-to https://localhost:44300/api/stripewebhook/sync
+./stripe.exe listen --forward-to https://localhost:5001/api/stripewebhook/sync --latest

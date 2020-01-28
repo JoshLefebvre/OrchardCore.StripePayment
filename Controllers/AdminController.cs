@@ -48,7 +48,8 @@ namespace LefeWareLearning.StripePayment
                     },
                     Metadata = new Dictionary<string, string>()
                     {
-                        { "TenantId", _shellSettings.Name }
+                        { "TenantId", _shellSettings["Secret"]},
+                        { "TenantName", _shellSettings.Name }
                     }
                 },
                 SuccessUrl = $"https://{HttpContext.Request.Host.Value}/LefeWareLearning.StripePayment/admin/paymentsuccess?sessionid={{CHECKOUT_SESSION_ID}}",

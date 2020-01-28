@@ -32,6 +32,12 @@ namespace LefeWareLearning.StripePayment.Controllers
         [Route("sync")]
         public async Task<IActionResult> Sync()
         {
+            //TODO: Add this somewhere global
+            // if (!IsDefaultShell())
+            // {
+            //     return Unauthorized();
+            // }
+
             var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
 
             try
@@ -40,23 +46,38 @@ namespace LefeWareLearning.StripePayment.Controllers
 
                 switch (stripeEvent.Type)
                 {
-                    case Events.ChargeSucceeded:
+                    case Events.CustomerSubscriptionCreated:
                     {
-                        var billingDetails = stripeEvent.Data.Object as Stripe.Checkout.Session;
-                        var paymentSuccessEventHandlers = _serviceProvider.GetRequiredService<IEnumerable<IPaymentSuccessEventHandler>>();
-                        await paymentSuccessEventHandlers.InvokeAsync(x => x.PaymentSuccess("", DateTime.Now, 12), _logger);
+                        //Create Stripe Customer Index
+                        var subscription = stripeEvent.Data.Object as Subscription; 
+
                         break;
                     }
-                    case Events.ChargeFailed:
+                    case Events.InvoicePaymentSucceeded:
                     {
-                        var billingDetails = stripeEvent.Data.Object as Stripe.Checkout.Session;
+                        //Create payment
+                        var invoice = stripeEvent.Data.Object as Invoice; 
+                        var tenantId = invoice.Lines.Data[0].Metadata["TenantId"];
+                        var amount = subscription.Plan.AmountDecimal.Value;
+
+                        var paymentSuccessEventHandlers = _serviceProvider.GetRequiredService<IEnumerable<IPaymentSuccessEventHandler>>();
+                        await paymentSuccessEventHandlers.InvokeAsync(x => x.PaymentSuccess(tenantId, DateTime.Now, amount), _logger);
+                        break;
+                    }
+                    case Events.InvoicePaymentFailed:
+                    {
+                        //Handle Failed Payment
+                         var subscription = stripeEvent.Data.Object as Invoice;
+
+                        _logger.LogError("Unable to process ");
+    
                         break;
                     }
                 }
             }
             catch (StripeException e)
             {
-                return BadRequest(e);
+                return BadRequest(e.Message);
             }
 
             return Ok();
