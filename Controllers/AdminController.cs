@@ -52,8 +52,8 @@ namespace LefeWareLearning.StripePayment
                         { "TenantName", _shellSettings.Name }
                     }
                 },
-                SuccessUrl = $"https://{HttpContext.Request.Host.Value}/LefeWareLearning.StripePayment/admin/paymentsuccess?sessionid={{CHECKOUT_SESSION_ID}}",
-                CancelUrl = $"https://{HttpContext.Request.Host.Value}/admin",
+                SuccessUrl = $"https://{HttpContext.Request.Host.Value}/{_shellSettings.Name}/LefeWareLearning.StripePayment/admin/paymentsuccess?sessionid={{CHECKOUT_SESSION_ID}}",
+                CancelUrl = $"https://{HttpContext.Request.Host.Value}/{_shellSettings.Name}/admin",
             };
 
             var service = new SessionService();

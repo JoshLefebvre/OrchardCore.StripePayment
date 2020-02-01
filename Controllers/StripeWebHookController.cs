@@ -58,7 +58,7 @@ namespace LefeWareLearning.StripePayment.Controllers
                         //Create payment
                         var invoice = stripeEvent.Data.Object as Invoice; 
                         var tenantId = invoice.Lines.Data[0].Metadata["TenantId"];
-                        var amount = subscription.Plan.AmountDecimal.Value;
+                        var amount = invoice.Lines.Data[0].Plan.AmountDecimal.Value;
 
                         var paymentSuccessEventHandlers = _serviceProvider.GetRequiredService<IEnumerable<IPaymentSuccessEventHandler>>();
                         await paymentSuccessEventHandlers.InvokeAsync(x => x.PaymentSuccess(tenantId, DateTime.Now, amount), _logger);
