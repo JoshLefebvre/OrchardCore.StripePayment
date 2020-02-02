@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using OrchardCore.Modules;
+using OrchardCore.TenantBilling.Models;
 using Stripe;
 
 namespace LefeWareLearning.StripePayment.Controllers
@@ -48,7 +49,7 @@ namespace LefeWareLearning.StripePayment.Controllers
                 {
                     case Events.CustomerSubscriptionCreated:
                     {
-                        //Create Stripe Customer Index
+                        //Create new customer
                         var subscription = stripeEvent.Data.Object as Subscription; 
 
                         break;
@@ -58,18 +59,22 @@ namespace LefeWareLearning.StripePayment.Controllers
                         //Create payment
                         var invoice = stripeEvent.Data.Object as Invoice; 
                         var tenantId = invoice.Lines.Data[0].Metadata["TenantId"];
+                        var tenantName = invoice.Lines.Data[0].Metadata["TenantName"];
                         var amount = invoice.Lines.Data[0].Plan.AmountDecimal.Value;
+                        var period = new BillingPeriod(invoice.Lines.Data[0].Period.Start.Value, invoice.Lines.Data[0].Period.End.Value);
 
                         var paymentSuccessEventHandlers = _serviceProvider.GetRequiredService<IEnumerable<IPaymentSuccessEventHandler>>();
-                        await paymentSuccessEventHandlers.InvokeAsync(x => x.PaymentSuccess(tenantId, DateTime.Now, amount), _logger);
+                        await paymentSuccessEventHandlers.InvokeAsync(x => x.PaymentSuccess(tenantId, tenantName, period, amount), _logger);
                         break;
                     }
                     case Events.InvoicePaymentFailed:
                     {
                         //Handle Failed Payment
-                         var subscription = stripeEvent.Data.Object as Invoice;
+                         var invoice = stripeEvent.Data.Object as Invoice;
+                        var tenantId = invoice.Lines.Data[0].Metadata["TenantId"];
 
-                        _logger.LogError("Unable to process ");
+                        //TODO: Handle
+                        _logger.LogError($"Unable to process payment for {tenantId}");
     
                         break;
                     }
