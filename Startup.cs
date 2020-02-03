@@ -1,20 +1,12 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using LefeWareLearning.StripePayment;
 using LefeWareLearning.TenantBilling;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using OrchardCore.DisplayManagement.Handlers;
-using OrchardCore.Environment.Shell.Configuration;
 using OrchardCore.Modules;
-using OrchardCore.Navigation;
 using OrchardCore.Security.Permissions;
-using OrchardCore.Settings;
+using Stripe;
 
 namespace LefeWareLearning.StripePayment
 {
@@ -38,12 +30,13 @@ namespace LefeWareLearning.StripePayment
 
         public override void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<StripeConfigurationOptions>(_configuration.GetSection("LefeWareLearning:Stripe"));
+            services.Configure<StripeConfigurationOptions>(_configuration.GetSection("Stripe"));
         }
 
         public override void Configure(IApplicationBuilder app, IEndpointRouteBuilder routes, IServiceProvider serviceProvider)
         {
-
+            //TODO: Need to add setting to add this as part of OC settings
+            StripeConfiguration.ApiKey = _configuration["Stripe:StripeAPIKey"];
         }
     }
 }

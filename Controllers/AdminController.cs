@@ -14,11 +14,10 @@ namespace LefeWareLearning.StripePayment
     [Feature(StripePaymentConstants.Features.StripePayment)]
     public class AdminController : Controller
     {
-        private const long AMOUNT = 4499;
-
         private readonly IAuthorizationService _authorizationService;
         private readonly StripeConfigurationOptions _options;
         private readonly ShellSettings _shellSettings;
+
 
         public AdminController(IAuthorizationService authorizationService, IOptions<StripeConfigurationOptions> options, ShellSettings shellSettings)
         {
@@ -33,8 +32,6 @@ namespace LefeWareLearning.StripePayment
             {
                 return Unauthorized();
             }
-
-            StripeConfiguration.ApiKey = _options.StripeAPIKey;
 
             var options = new SessionCreateOptions
             {
@@ -61,6 +58,7 @@ namespace LefeWareLearning.StripePayment
             var session = service.Create(options);
 
             ViewBag.SessionId = session.Id;
+            ViewBag.StripePublicKey = _options.StripePublicKey;
             return View();
         }
 

@@ -11,5 +11,7 @@ namespace LefeWareLearning.StripePayment
         public string WebhookSecret { get; set; }
         public string StripeAPIKey { get; set; }
         public string StripePlanKey { get; set; }
+
+        public string StripePublicKey { get; set; }
     }
 }

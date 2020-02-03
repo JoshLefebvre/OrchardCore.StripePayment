@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using LefeWareLearning.TenantBilling;
+using LefeWareLearning.TenantBilling.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
@@ -47,24 +48,22 @@ namespace LefeWareLearning.StripePayment.Controllers
 
                 switch (stripeEvent.Type)
                 {
-                    case Events.CustomerSubscriptionCreated:
-                    {
-                        //Create new customer
-                        var subscription = stripeEvent.Data.Object as Subscription; 
-
-                        break;
-                    }
                     case Events.InvoicePaymentSucceeded:
                     {
-                        //Create payment
-                        var invoice = stripeEvent.Data.Object as Invoice; 
-                        var tenantId = invoice.Lines.Data[0].Metadata["TenantId"];
-                        var tenantName = invoice.Lines.Data[0].Metadata["TenantName"];
-                        var amount = invoice.Lines.Data[0].Plan.AmountDecimal.Value;
-                        var period = new BillingPeriod(invoice.Lines.Data[0].Period.Start.Value, invoice.Lines.Data[0].Period.End.Value);
+                        var invoice = stripeEvent.Data.Object as Invoice;
+
+                        //Line Items
+                        var lineItem = invoice.Lines.Data[0];//Only interested in the first item 
+                        var tenantId = lineItem.Metadata["TenantId"];
+                        var tenantName = lineItem.Metadata["TenantName"];
+                        var amount = lineItem.Plan.AmountDecimal.Value;
+                        var period = new BillingPeriod(lineItem.Period.Start.Value, lineItem.Period.End.Value);
+
+                        //Payment Method
+                        var paymentMethod = await GetPaymentInformation(invoice);
 
                         var paymentSuccessEventHandlers = _serviceProvider.GetRequiredService<IEnumerable<IPaymentSuccessEventHandler>>();
-                        await paymentSuccessEventHandlers.InvokeAsync(x => x.PaymentSuccess(tenantId, tenantName, period, amount), _logger);
+                        await paymentSuccessEventHandlers.InvokeAsync(x => x.PaymentSuccess(tenantId, tenantName, period, amount, paymentMethod), _logger);
                         break;
                     }
                     case Events.InvoicePaymentFailed:
@@ -86,6 +85,27 @@ namespace LefeWareLearning.StripePayment.Controllers
             }
 
             return Ok();
+        }
+
+        private async Task<TenantBilling.Models.PaymentMethod> GetPaymentInformation(Invoice invoice)
+        {
+            //Get Customer
+            var stripeCustomerId = invoice.CustomerId;
+            var customerService = new CustomerService();
+            var customer = await customerService.GetAsync(stripeCustomerId);
+
+            //User Customer to extract subscription payment
+            var paymentMethodId = customer.Subscriptions.Data[0].DefaultPaymentMethodId;
+            var paymentService = new PaymentMethodService();
+            var paymentMethod = await paymentService.GetAsync(paymentMethodId);
+
+            //Get card info
+            var card = paymentMethod.Card;
+            var cardType = (CardType)Enum.Parse(typeof(CardType), card.Brand);
+            var creditCardInformation = new CreditCardInformation(cardType, Int32.Parse(card.Last4), Convert.ToInt32(card.ExpMonth), Convert.ToInt32(card.ExpYear));
+            var paymentInformation = new TenantBilling.Models.PaymentMethod(true,  creditCardInformation);
+
+            return paymentInformation;
         }
     }
 }

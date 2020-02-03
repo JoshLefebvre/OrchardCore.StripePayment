@@ -1,15 +1,16 @@
 @{
     ViewData["Title"] = "Payment";
 }
+
 <div>
-    <button onclick="addSubscription()">Add New Subscription</button>
+    <p>Loading</p>
 </div>
 
 <script src="https://js.stripe.com/v3/"></script>
 <script type="text/javascript">
 
-    function addSubscription() {
-        var stripe = Stripe('pk_test_GPnhA22EXteVUt77tF1TrRxF');
+    window.onload = function loadCheckout() {
+        var stripe = Stripe('@ViewBag.StripePublicKey');
         stripe.redirectToCheckout({
             // Make the id field from the Checkout Session creation API response
             // available to this file, so you can provide it as parameter here
