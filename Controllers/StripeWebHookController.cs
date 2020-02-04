@@ -101,7 +101,7 @@ namespace LefeWareLearning.StripePayment.Controllers
 
             //Get card info
             var card = paymentMethod.Card;
-            var cardType = (CardType)Enum.Parse(typeof(CardType), card.Brand);
+            var cardType = (CardType)Enum.Parse(typeof(CardType), card.Brand.ToLower());
             var creditCardInformation = new CreditCardInformation(cardType, Int32.Parse(card.Last4), Convert.ToInt32(card.ExpMonth), Convert.ToInt32(card.ExpYear));
             var paymentInformation = new TenantBilling.Models.PaymentMethod(true,  creditCardInformation);
 
