@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using OrchardCore.Modules;
+using OrchardCore.TenantBilling.EventHandlers;
 using OrchardCore.TenantBilling.Models;
 using Stripe;
 
@@ -56,6 +57,7 @@ namespace LefeWareLearning.StripePayment.Controllers
                         var lineItem = invoice.Lines.Data[0];//Only interested in the first item 
                         var tenantId = lineItem.Metadata["TenantId"];
                         var tenantName = lineItem.Metadata["TenantName"];
+                        var planName = lineItem.Description;
                         var amount = lineItem.Plan.AmountDecimal.Value;
                         var period = new BillingPeriod(lineItem.Period.Start.Value, lineItem.Period.End.Value);
 
@@ -63,18 +65,25 @@ namespace LefeWareLearning.StripePayment.Controllers
                         var paymentMethod = await GetPaymentInformation(invoice);
 
                         var paymentSuccessEventHandlers = _serviceProvider.GetRequiredService<IEnumerable<IPaymentSuccessEventHandler>>();
-                        await paymentSuccessEventHandlers.InvokeAsync(x => x.PaymentSuccess(tenantId, tenantName, period, amount, paymentMethod), _logger);
+                        await paymentSuccessEventHandlers.InvokeAsync(x => x.PaymentSuccess(tenantId, tenantName, period, amount, paymentMethod, planName), _logger);
                         break;
                     }
                     case Events.InvoicePaymentFailed:
                     {
-                        //Handle Failed Payment
-                         var invoice = stripeEvent.Data.Object as Invoice;
-                        var tenantId = invoice.Lines.Data[0].Metadata["TenantId"];
+                        var invoice = stripeEvent.Data.Object as Invoice;
 
-                        //TODO: Handle
-                        _logger.LogError($"Unable to process payment for {tenantId}");
-    
+                        //Line Items
+                        var lineItem = invoice.Lines.Data[0];//Only interested in the first item 
+                        var tenantId = lineItem.Metadata["TenantId"];
+                        var tenantName = lineItem.Metadata["TenantName"];
+                        var planName = lineItem.Description;
+                        var period = new BillingPeriod(lineItem.Period.Start.Value, lineItem.Period.End.Value);
+
+                        //Payment Method
+                        var paymentMethod = await GetPaymentInformation(invoice);
+
+                        var paymentFailedEventHandlers = _serviceProvider.GetRequiredService<IEnumerable<IPaymentFailedEventHandler>>();
+                        await paymentFailedEventHandlers.InvokeAsync(x => x.PaymentFailed(tenantId, tenantName, period, paymentMethod, planName), _logger);
                         break;
                     }
                 }
