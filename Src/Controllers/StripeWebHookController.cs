@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using LefeWareLearning.TenantBilling;
-using LefeWareLearning.TenantBilling.Models;
+using OrchardCore.TenantBilling;
+using OrchardCore.TenantBilling.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,7 +11,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using OrchardCore.Modules;
 using OrchardCore.TenantBilling.EventHandlers;
-using OrchardCore.TenantBilling.Models;
 using Stripe;
 
 namespace LefeWareLearning.StripePayment.Controllers
@@ -100,7 +99,7 @@ namespace LefeWareLearning.StripePayment.Controllers
             return Ok();
         }
 
-        private async Task<TenantBilling.Models.PaymentMethod> GetPaymentInformation(Invoice invoice)
+        private async Task<OrchardCore.TenantBilling.Models.PaymentMethod> GetPaymentInformation(Invoice invoice)
         {
             //Get Customer
             var stripeCustomerId = invoice.CustomerId;
@@ -116,7 +115,7 @@ namespace LefeWareLearning.StripePayment.Controllers
             var card = paymentMethod.Card;
             var cardType = (CardType)Enum.Parse(typeof(CardType), card.Brand.ToLower());
             var creditCardInformation = new CreditCardInformation(cardType, Int32.Parse(card.Last4), Convert.ToInt32(card.ExpMonth), Convert.ToInt32(card.ExpYear));
-            var paymentInformation = new TenantBilling.Models.PaymentMethod(true,  creditCardInformation);
+            var paymentInformation = new OrchardCore.TenantBilling.Models.PaymentMethod(true,  creditCardInformation);
 
             return paymentInformation;
         }
