@@ -61,6 +61,8 @@ namespace LefeWareLearning.StripePayment.Controllers
                         var amount = lineItem.Plan.AmountDecimal.Value;
                         var period = new BillingPeriod(lineItem.Period.Start.Value, lineItem.Period.End.Value);
 
+                        _logger.LogInformation($"Incoming Invoice PaymentSucceededEvent for tenant {tenantName} for {planName} plan of amount ${amount} for period of {period.Start} to {period.End}");
+
                         //Payment Method
                         var paymentMethod = await GetPaymentInformation(invoice);
 
@@ -81,6 +83,8 @@ namespace LefeWareLearning.StripePayment.Controllers
 
                         //Payment Method
                         var paymentMethod = await GetPaymentInformation(invoice);
+
+                        _logger.LogInformation($"Incoming Invoice PaymentFailedEvent for tenant {tenantName} for {planName} plan for period of {period.Start} to {period.End}");
 
                         var paymentFailedEventHandlers = _serviceProvider.GetRequiredService<IEnumerable<IPaymentFailedEventHandler>>();
                         await paymentFailedEventHandlers.InvokeAsync(x => x.PaymentFailed(tenantId, tenantName, period, paymentMethod, planName), _logger);
