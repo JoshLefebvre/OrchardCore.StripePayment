@@ -4,7 +4,7 @@ namespace LefeWareLearning.StripePayment
     {
         public static class Features
         {
-            public const string StripePayment = "LefeWareLearning.StripePayment";
+            public const string StripePayment = "OrchardCore.StripePayment";
         }
     }
 }

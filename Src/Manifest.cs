@@ -9,12 +9,12 @@ using OrchardCore.Modules.Manifest;
 )]
 
 [assembly: Feature(
-    Id = "LefeWareLearning.StripePayment",
+    Id = "OrchardCore.StripePayment",
     Name = "StripePayment",
     Category = "LefeWare Learning Payment Types",
     Description = "Allows users to use stripe as their payment methods",
     Dependencies = new[]
     {
-        "LefeWareLearning.TenantBilling",
+        "OrchardCore.TenantBilling",
     }
 )]
