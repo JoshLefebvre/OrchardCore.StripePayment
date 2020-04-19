@@ -34,17 +34,16 @@ namespace LefeWareLearning.StripePayment.Controllers
         [Route("sync")]
         public async Task<IActionResult> Sync()
         {
-            //TODO: Add this somewhere global
-            // if (!IsDefaultShell())
-            // {
-            //     return Unauthorized();
-            // }
+            if (!IsDefaultShell())
+            {
+                return Unauthorized();
+            }
 
             var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
 
             try
             {
-                var stripeEvent = EventUtility.ConstructEvent(json, Request.Headers["Stripe-Signature"], _options.WebhookSecret);
+                var stripeEvent = EventUtility.ConstructEvent(json, Request.Headers["Stripe-Signature"], _options.WebhookSecret, throwOnApiVersionMismatch: false);
 
                 switch (stripeEvent.Type)
                 {
