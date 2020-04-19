@@ -93,6 +93,12 @@ namespace LefeWareLearning.StripePayment.Controllers
             }
             catch (StripeException e)
             {
+                _logger.LogError($"Stripe Web Hook failed: {e.Message}");
+                return BadRequest(e.Message);
+            }
+            catch(Exception e)
+            {
+                _logger.LogError($"Stripe Web Hook failed: {e.Message}");
                 return BadRequest(e.Message);
             }
 
