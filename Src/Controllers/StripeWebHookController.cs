@@ -34,10 +34,10 @@ namespace LefeWareLearning.StripePayment.Controllers
         [Route("sync")]
         public async Task<IActionResult> Sync()
         {
-            if (!IsDefaultShell())
-            {
-                return Unauthorized();
-            }
+            //if (!IsDefaultShell())
+            //{
+            //    return Unauthorized();
+            //}
 
             var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
 
