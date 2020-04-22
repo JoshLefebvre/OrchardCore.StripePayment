@@ -5,13 +5,13 @@ using OrchardCore.Modules.Manifest;
     Author = "LefeWareLearning",
     Website = "https://orchardproject.net",
     Version = "1.0.0",
-    Category = "LefeWare Learning"
+    Category = "Payment"
 )]
 
 [assembly: Feature(
     Id = "OrchardCore.StripePayment",
     Name = "StripePayment",
-    Category = "LefeWare Learning Payment Types",
+    Category = "Payment",
     Description = "Allows users to use stripe as their payment methods",
     Dependencies = new[]
     {
