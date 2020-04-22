@@ -18,7 +18,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="Stripe.net" Version="34.7.0" />
+    <PackageReference Include="Stripe.net" Version="36.2.0" />
     <!--<PackageReference Include="OrchardCore.TenantBilling" Version="1.0.0-beta"/>
     <PackageReference Include="OrchardCore.Abstractions" Version="1.0.0-rc1-12684"/>
     <PackageReference Include="OrchardCore.Admin.Abstractions" Version="1.0.0-rc1-12684"/>
