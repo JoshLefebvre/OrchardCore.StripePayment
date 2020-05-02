@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\LefeWareLearning.Core\OrchardCore.TenantBilling\Src\OrchardCore.TenantBilling.csproj" />
+    <ProjectReference Include="..\..\LefeWareLearning.Core\OrchardCore.TenantBilling\OrchardCore.TenantBilling.csproj" />
     <ProjectReference Include="..\..\OrchardCore\OrchardCore.Abstractions\OrchardCore.Abstractions.csproj" />
     <ProjectReference Include="..\..\OrchardCore\OrchardCore.Admin.Abstractions\OrchardCore.Admin.Abstractions.csproj" />
     <ProjectReference Include="..\..\OrchardCore\OrchardCore.DisplayManagement\OrchardCore.DisplayManagement.csproj" />
