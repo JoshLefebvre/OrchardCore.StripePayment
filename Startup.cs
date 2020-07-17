@@ -7,8 +7,10 @@ using Microsoft.Extensions.DependencyInjection;
 using OrchardCore.Modules;
 using OrchardCore.Security.Permissions;
 using Stripe;
+using LefeWareLearning.StripePayment;
+using OrchardCore.Data.Migration;
 
-namespace LefeWareLearning.StripePayment
+namespace OrchardCore.StripePayment
 {
     public class Startup : StartupBase
     {
@@ -31,6 +33,7 @@ namespace LefeWareLearning.StripePayment
         public override void ConfigureServices(IServiceCollection services)
         {
             services.Configure<StripeConfigurationOptions>(_configuration.GetSection("Stripe"));
+            services.AddScoped<IDataMigration, StripePaymentMigrations>();
         }
 
         public override void Configure(IApplicationBuilder app, IEndpointRouteBuilder routes, IServiceProvider serviceProvider)

@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace LefeWareLearning.StripePayment.Settings
 {
-    public class PaymentSettings
+    public class StripeSettings
     {
         public string ClientID { get; set; }
         public string ClientSecret { get; set; }
