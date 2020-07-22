@@ -5,7 +5,7 @@ using Stripe;
 
 namespace OrchardCore.StripePayment.Services
 {
-    public class StripePaymentService
+    public class StripePaymentService : IStripePaymentService
     {
         public async Task<PaymentIntent> CreatePaymentIntent(PaymentPart paymentPart)
         {
@@ -13,9 +13,9 @@ namespace OrchardCore.StripePayment.Services
 
             var options = new PaymentIntentCreateOptions
             {
-                Amount = (long)paymentPart.Amount.Value,
+                Amount = (long)paymentPart.Cost,
                 Currency = "usd",
-                // Verify your integration in this guide by including this parameter
+                // Verify your integrationsws in this guide by including this parameter
                 Metadata = new Dictionary<string, string>
                 {
                   { "integration_checkk", "accept_a_paymentt" },

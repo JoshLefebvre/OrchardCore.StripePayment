@@ -20,11 +20,17 @@ namespace OrchardCore.StripePayment
 
         public int Create()
         {
+            _contentDefinitionManager.AlterPartDefinition("StripePaymentFormPart", builder => builder
+                .Attachable()
+                .WithDescription("Provides the template needed to dispaly a stripe payment form.")
+            );
+
             _contentDefinitionManager.AlterTypeDefinition("StripePaymentForm", builder => builder
                 .Draftable()
                 .Versionable()
                 .Listable()
                 .WithPart("PaymentPart", part => part.WithPosition("1"))
+                .WithPart("StripePaymentFormPart", part => part.WithPosition("2"))
             );
 
             return 1;

@@ -1,28 +1,43 @@
+@model StripePaymentFormPartViewModel;
+
 <script src="https://js.stripe.com/v3/"></script>
 
 <form id="payment-form">
-    <div id="card-element">
-        <!-- Elements will create input elements here -->
-    </div>
-
-    <!-- We'll put the error messages in this element -->
+    <div id="card-element"></div>
     <div id="card-errors" role="alert"></div>
 
-    <button id="submit">Pay</button>
+    <button id="submit" class="btn btn-primary">Pay</button>
 </form>
 
 <script>
-    var stripe = Stripe('');
+
+    //Create an instance of an Element and mount it to the Element container:
+    var stripe = Stripe('pk_test_GPnhA22EXteVUt77tF1TrRxF');
     var elements = stripe.elements();
     var style = {
         base: {
-            color: "#32325d",
-        }
+            iconColor: '#c4f0ff',
+            color: '#fff',
+            fontWeight: 500,
+            fontFamily: 'Roboto, Open Sans, Segoe UI, sans-serif',
+            fontSize: '16px',
+            fontSmoothing: 'antialiased',
+            ':-webkit-autofill': {
+                color: '#fce883',
+            },
+            '::placeholder': {
+                color: '#87BBFD',
+            },
+        },
+        invalid: {
+            iconColor: '#FFC7EE',
+            color: '#FFC7EE',
+        },
     };
-
     var card = elements.create("card", { style: style });
     card.mount("#card-element");
 
+    //Validates user input as it is typed
     cardElement.on('change', function (event) {
         var displayError = document.getElementById('card-errors');
         if (event.error) {
@@ -32,8 +47,8 @@
         }
     });
 
+    //Submit the payment to stripe
     var form = document.getElementById('payment-form');
-
     form.addEventListener('submit', function (ev) {
         ev.preventDefault();
         stripe.confirmCardPayment(clientSecret, {

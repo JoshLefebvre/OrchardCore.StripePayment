@@ -9,6 +9,9 @@ using OrchardCore.Security.Permissions;
 using Stripe;
 using LefeWareLearning.StripePayment;
 using OrchardCore.Data.Migration;
+using OrchardCore.StripePayment.Services;
+using OrchardCore.ContentManagement;
+using OrchardCore.ContentManagement.Display.ContentDisplay;
 
 namespace OrchardCore.StripePayment
 {
@@ -34,6 +37,11 @@ namespace OrchardCore.StripePayment
         {
             services.Configure<StripeConfigurationOptions>(_configuration.GetSection("Stripe"));
             services.AddScoped<IDataMigration, StripePaymentMigrations>();
+
+            services.AddTransient<IStripePaymentService, StripePaymentService>();
+
+            services.AddContentPart<StripePaymentFormPart>()
+                .UseDisplayDriver<StripePaymentFormPartDisplay>();
         }
 
         public override void Configure(IApplicationBuilder app, IEndpointRouteBuilder routes, IServiceProvider serviceProvider)
